@@ -1,6 +1,10 @@
+import OpenAI from "openai";
+import { createAssistant } from "./openai/createAssistant.js";
+
 async function main() {
-    console.log("Hello, world!");
+    const client = new OpenAI()
     
+    const assistant = await createAssistant(client);
 }
 
 main();
