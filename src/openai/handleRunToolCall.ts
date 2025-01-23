@@ -29,8 +29,18 @@ export async function handleRunToolCalls(run: Run, thread: Thread, client: OpenA
                 }
             } catch (error) {
                 const errorMessage = error instanceof Error ? error.message : String(error);
+                return {
+                    tool_call_id: tool.id,
+                    output: `Error: ${errorMessage}`,
+                }
             }
         })
     )
-    
+    const validOutputs = toolOutputs.filter(Boolean) as OpenAI.Beta.Threads.Runs.RunSubmitToolOutputsParams.ToolOutput[];
+    if (validOutputs.length === 0) return run;
+    return client.beta.threads.runs.submitToolOutputsAndPoll(
+        thread.id,
+        run.id,
+        { tool_outputs: validOutputs }
+    );
 }
